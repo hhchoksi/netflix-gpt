@@ -1,60 +1,72 @@
-import Header from "./Header";
-import { useState, useRef } from "react";
-import { checkValidDataSignin, checkValidDataSignup } from "../utils/validate";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import React, { useState, useRef } from 'react';
+import Header from './Header';
+import { checkValidDataSignin, checkValidDataSignup } from '../utils/validate';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../utils/firebase';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 const Login = () => {
   const [isSigninForm, setIsSigninForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const ToggleSigninForm = () => {
-    setIsSigninForm(!isSigninForm);
-  };
 
   const fullname = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+  const dispatch = useDispatch();
+  const USER_AVATAR = "https://uxwing.com/wp-content/themes/uxwing/download/hand-gestures/hand-two-finger-color-icon.png";
+
+  const ToggleSigninForm = () => {
+    setIsSigninForm(!isSigninForm);
+  };
 
   const handleButtonClick = () => {
-    if (isSigninForm) {
-      const msg = checkValidDataSignin(email.current.value, password.current.value);
-      setErrorMessage(msg);
-      if (msg) return;
-    } else {
+    if (!isSigninForm) {
       const msg = checkValidDataSignup(fullname.current.value, email.current.value, password.current.value);
       setErrorMessage(msg);
       if (msg) return;
-    }
 
-    if (!isSigninForm) {
       createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
         .then((userCredential) => {
-          // Signed in successfully, redirect to home page
           const user = userCredential.user;
-          console.log(user);
+          updateProfile(user, {
+            displayName: fullname.current.value,
+            photoURL: USER_AVATAR,
+          })
+          .then(() => {
+            const { uid, email, displayName, photoURL } = auth.currentUser;
+            dispatch(
+              addUser({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              })
+            );
+          })
+          .catch((error) => {
+            setErrorMessage(error.message);
+          });
         })
         .catch((error) => {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          setErrorMessage(errorCode + errorMessage);
-          console.error("Error creating user:", errorMessage);
+          setErrorMessage(error.code + ": " + error.message);
+          console.error("Error creating user:", error.message);
         });
-    }
-    else {
+    } else {
+      const msg = checkValidDataSignin(email.current.value, password.current.value);
+      setErrorMessage(msg);
+      if (msg) return;
+
       signInWithEmailAndPassword(auth, email.current.value, password.current.value)
         .then((userCredential) => {
-          // Signed in successfully, redirect to home page
           const user = userCredential.user;
-          console.log(user);
         })
         .catch((error) => {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          setErrorMessage(errorCode + errorMessage);
-          console.error("Error signing in:", errorMessage);
+          setErrorMessage(error.code + ": " + error.message);
+          console.error("Error signing in:", error.message);
         });
     }
-  }
+  };
 
   return (
     <div>
@@ -78,20 +90,20 @@ const Login = () => {
               ref={fullname}
               type="text"
               placeholder="Full Name"
-              className="block w-full p-2 my-6 border border-gray-300 rounded-md bg-gray-700"
+              className="block w-full p-2 my-6 border border-gray-300 rounded-md bg-black bg-opacity-10"
             />
           )}
           <input
             ref={email}
             type="text"
             placeholder="Email Address"
-            className="block w-full p-2 my-6 border border-gray-300 rounded-md bg-gray-700"
+            className="block w-full p-2 my-6 border border-gray-300 rounded-md bg-black bg-opacity-10"
           />
           <input
             ref={password}
             type="password"
             placeholder="Password"
-            className="block w-full p-2 my-6 border border-gray-300 rounded-md bg-gray-700"
+            className="block w-full p-2 my-6 border border-gray-300 rounded-md bg-black bg-opacity-10"
           />
           <p className="text-red-600 font-bold text-lg py-2">{errorMessage}</p>
           <button
