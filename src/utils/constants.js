@@ -4,6 +4,8 @@ export const bg_banner = "https://nyctastemakers.com/wp-content/uploads/2021/10/
 
 export const logo = "https://cdn-icons-png.flaticon.com/512/5977/5977590.png";
 
+export const IMG_CDN_URL = "https://image.tmdb.org/t/p/w500";
+
 export const API_OPTIONS = {
     method: 'GET',
     headers: {
