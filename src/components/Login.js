@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import { auth } from '../utils/firebase';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { USER_AVATAR, bg_banner } from '../utils/constants';
 
 const Login = () => {
   const [isSigninForm, setIsSigninForm] = useState(true);
@@ -14,7 +15,6 @@ const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
   const dispatch = useDispatch();
-  const USER_AVATAR = "https://uxwing.com/wp-content/themes/uxwing/download/hand-gestures/hand-two-finger-color-icon.png";
 
   const ToggleSigninForm = () => {
     setIsSigninForm(!isSigninForm);
@@ -73,7 +73,7 @@ const Login = () => {
       <Header />
       <div className="relative w-full h-screen">
         <img
-          src="https://nyctastemakers.com/wp-content/uploads/2021/10/NYCTM-Home-Banner-39.png"
+          src={bg_banner}
           alt="banner"
           className="absolute inset-0 w-full h-full object-cover"
         />

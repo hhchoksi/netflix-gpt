@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
+import { logo } from '../utils/constants';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -45,10 +46,15 @@ const Header = () => {
   }, [dispatch, navigate]);
 
   return (
-    <div className="absolute px-12 -mt-5 z-20 w-screen py-2 bg-gradient-to-b from-black flex flex-col md:flex-row justify-between">
-      <img src="https://cdn-icons-png.flaticon.com/512/5977/5977590.png" alt="logo" className="w-36 h-36" />
+    <div className="fixed px-12 -mt-5 z-20 w-screen py-2 bg-gradient-to-b from-black flex flex-col md:flex-row justify-between">
+      <img src={logo} alt="logo" className="w-36 h-36" />
       {user && (
         <div className="flex p-2 justify-between">
+          <img
+            className="hidden md:block w-12 h-12 rounded-corner mr-2 my-9"
+            alt="usericon"
+            src={user?.photoURL}
+          />
           <button onClick={handleSignOut} className="font-bold text-white">
             Sign Out
           </button>
