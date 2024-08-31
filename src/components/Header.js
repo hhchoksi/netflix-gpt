@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
-import { toggleGptSearchView } from '../utils/gptSlice';
+import { toggleGptSearchView, clearMovieResults } from '../utils/gptSlice';
 import { logo } from '../utils/constants';
 import { changeLanguage } from '../utils/configSlice';
 import { SUPPORTED_LANGUAGES } from '../utils/constants';
@@ -17,6 +17,9 @@ const Header = () => {
 
   const handleGptSearchView = () => {
     dispatch(toggleGptSearchView());
+    if(showGptSearch) {
+      dispatch(clearMovieResults());
+    }
   };
 
   const handleLanguageChange = (e) => {
